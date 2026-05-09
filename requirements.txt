@@ -1,0 +1,25 @@
+# ─── Core ───────────────────────────────────────────────
+numpy>=1.26.0
+opencv-python>=4.10.0
+
+# ─── Face Recognition ───────────────────────────────────
+insightface==0.7.3
+face-recognition==1.3.0
+
+# ─── ONNX Runtime (platform-specific) ──────────────────
+# Mac M-series (Apple Silicon, Python 3.8–3.11):
+#   pip install onnxruntime-silicon
+#
+# Mac M-series (Python 3.13, current setup):
+#   pip install onnxruntime
+#
+# TurtleBot / Raspberry Pi (ARM64):
+#   pip install onnxruntime
+#
+# Install manually based on your platform ↑
+# DO NOT uncomment both at the same time
+# onnxruntime-silicon  # Mac M-series, Python ≤3.11
+onnxruntime            # everything else (including Python 3.13)
+
+# ─── Object Detection ───────────────────────────────────
+ultralytics>=8.3.0
