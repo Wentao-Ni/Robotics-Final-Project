@@ -23,16 +23,16 @@ CONF_THRESHOLD = 0.5  # minimum keypoint confidence to trust
 EMBEDDING_PATH = "face.pkl"
 
 #get face embedding -> check if the embedding shares some of the similarity -> if same, do nothing, otherwise, save it through pickle
-def handle_face_embedding(frame):
+def handleFaceEmbedding(frame):
     faces = app.get(frame)
     print(f"faces detected: {len(faces)}")  # also add this
     with ThreadPoolExecutor(max_workers=2) as executor:
-        futures = [executor.submit(check_similarity, face.embedding) for face in faces]
+        futures = [executor.submit(checkSimilarity, face.embedding) for face in faces]
         for f in futures:
             f.result()  # will print any hidden crash
 
 
-def check_similarity(new_embedding):
+def checkSimilarity(new_embedding):
     try:
         with open(EMBEDDING_PATH, 'rb') as f:
             database = pickle.load(f)
@@ -41,7 +41,7 @@ def check_similarity(new_embedding):
 
     # empty database, save immediately
     if database == {}:
-        save_embedding(new_embedding)
+        saveEmbedding(new_embedding)
         return
 
     for person_id, person_emb in database.items():
@@ -52,10 +52,10 @@ def check_similarity(new_embedding):
             return
 
     # no match found after checking everyone
-    save_embedding(new_embedding)
+    saveEmbedding(new_embedding)
 
 
-def save_embedding(embedding):
+def saveEmbedding(embedding):
     try:
         with open(EMBEDDING_PATH, 'rb') as f:
             database = pickle.load(f)
@@ -79,39 +79,52 @@ def is_hand_raised(kps):
     return False
 
 
-cap = cv.VideoCapture(0)
-if not cap.isOpened():
-    print("Cannot open camera")
-    exit()
+def captureVideo():
+    cap = cv.VideoCapture(0)
+    if not cap.isOpened():
+        print("Cannot open camera")
+        exit()
 
-cap.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+    cap.set(cv.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
-        break
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
 
-    results = model.predict(frame,verbose=False)
-    if not results:
-        continue
-    annotated = results[0].plot() 
+        results = model.predict(frame,verbose=False)
+        if not results:
+            continue
+        annotated = results[0].plot() 
 
-    result = results[0]
-    if result.keypoints is not None and result.boxes is not None:
-        for i, box in enumerate(result.boxes):
-            if is_hand_raised(result.keypoints[i]):
-                handle_face_embedding(frame)
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                cv.rectangle(annotated, (x1, y1), (x2, y2), (0, 255, 0), 3)
-                cv.putText(annotated, "Hand Raised!", (x1, y1 - 10),
-                           cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+        result = results[0]
+        if result.keypoints is not None and result.boxes is not None:
+            for i, box in enumerate(result.boxes):
+                if is_hand_raised(result.keypoints[i]):
+                    handleFaceEmbedding(frame)
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    cv.rectangle(annotated, (x1, y1), (x2, y2), (0, 255, 0), 3)
+                    cv.putText(annotated, "Hand Raised!", (x1, y1 - 10),
+                            cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
-    cv.imshow('frame', annotated)
+        cv.imshow('frame', annotated)
 
-    if cv.waitKey(1) == ord('q'):
-        break
+        if cv.waitKey(1) == ord('q'):
+            break
 
-cap.release()
-cv.destroyAllWindows()
+    cap.release()
+    cv.destroyAllWindows()
+
+
+
+def getFaceEmbedding():
+    with open(EMBEDDING_PATH, 'rb') as f:
+        data = pickle.load(f)
+        print(data)
+
+
+if __name__ == "__main__":
+    #captureVideo()
+    getFaceEmbedding()
