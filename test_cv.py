@@ -94,7 +94,7 @@ def captureVideo():
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        results = model.predict(frame,verbose=False)
+        results = model.track(frame,verbose=False)
         if not results:
             continue
         annotated = results[0].plot() 
