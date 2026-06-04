@@ -358,17 +358,8 @@ class VideoSubscriberNode(Node):
         angular_gain = 0.005
         max_linear_speed = 0.4
 
-        if person_found_this_frame:
-            error_x = float(person_x) - float(width) / 2.0
-            twistS.twist.angular.z = float(-error_x * angular_gain)
-            twistS.twist.linear.x = float(max_linear_speed)
-
-        #display the annotated frame on the monitor
-        window_name = "Hand Raise Detection"
-        cv.imshow(window_name, annotated)
-        cv.waitKey(1)
-
-        #normal following
+        #calculating the anglular gain to match the target's movement when the robot is in the
+        #following state without issue.
         if not self.should_stop:
             if person_found_this_frame:
                 error_x = float(person_x) - float(width) / 2.0
@@ -379,6 +370,11 @@ class VideoSubscriberNode(Node):
                 twistS.twist.angular.z = 0.0
 
             self.turtleBot_cmd_pub.publish(twistS)
+
+        #display the annotated frame on the monitor
+        window_name = "Hand Raise Detection"
+        cv.imshow(window_name, annotated)
+        cv.waitKey(1)
 
 
         #=============================
