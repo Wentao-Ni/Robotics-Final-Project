@@ -223,7 +223,7 @@ class VideoSubscriberNode(Node):
         left_min  = get_min(front_index + cone_beams, front_index + cone_beams + side_beams)
         right_min = get_min(front_index - cone_beams - side_beams, front_index - cone_beams)
 
-        #if the fron is blocked, start avoiding the blockage depending on which side has more open space
+        #if the front is blocked, start avoiding the blockage depending on which side has more open space
         if front_min < 1.0:
             self.should_stop = True
             # pick the more open side to turn toward
