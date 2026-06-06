@@ -45,6 +45,8 @@ Stop with `Ctrl+C`.
 - Subscribes: `/raph/oakd/rgb/preview/image_raw`, `/raph/scan`
 - Publishes: `/raph/cmd_vel`
 
-## Note
+## AI Statement
+Claude Code was used for bug-fixing and for generating library-specific syntax throughout this project. Especially for formatting the face embedding dictionary before pickling, the conditions of the face detection guard in the save_face_async function. Claude was also used to suggest ways to improve the formatting of this README.md. 
 
+## Note
 Obstacle avoidance movement is commented out (left in to show effort); the robot detects obstacles but stops rather than driving around them.
