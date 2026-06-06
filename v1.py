@@ -280,7 +280,7 @@ class VideoSubscriberNode(Node):
             #for each person present in the frame
             for idx, person in enumerate(people):
 
-                #ignore if confidence value is too low
+                #ignore if confidence value is too low, as sometimes the YOLO model will treat chair as person.
                 conf = r.boxes.conf[idx].item()
                 if conf < 0.6:
                     continue
